@@ -1,4 +1,4 @@
-# Seguidor Solar
+# Seguidor Solar de un Eje
 Para Iniciar el Repositorio del Seguimiento Solar.
 
   colcon build --packages-select solar_follower
