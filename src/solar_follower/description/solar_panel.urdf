@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<robot name="solar_panel">
+    <link name="world"/>
+    
+    <joint name="world_joint" type="fixed">
+        <parent link="world"/>
+        <child link="base_link"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Base más corta y robusta -->
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <cylinder length="0.3" radius="0.25"/>
+            </geometry>
+            <material name="base_color">
+                <color rgba="0.3 0.3 0.3 1"/>
+            </material>
+            <origin xyz="0 0 0.15" rpy="0 0 0"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="0.3" radius="0.25"/>
+            </geometry>
+            <origin xyz="0 0 0.15" rpy="0 0 0"/>
+        </collision>
+        <inertial>
+            <mass value="20.0"/>
+            <origin xyz="0 0 0.15" rpy="0 0 0"/>
+            <inertia ixx="2.0" ixy="0.0" ixz="0.0" 
+                    iyy="2.0" iyz="0.0" 
+                    izz="0.5"/>
+        </inertial>
+    </link>
+
+    <!-- Brazo de soporte -->
+    <joint name="support_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="support_link"/>
+        <origin xyz="0 0 0.3" rpy="0 0 0"/>
+    </joint>
+
+    <link name="support_link">
+        <visual>
+            <geometry>
+                <cylinder length="1.0" radius="0.1"/>
+            </geometry>
+            <material name="support_color">
+                <color rgba="0.4 0.4 0.4 1"/>
+            </material>
+            <origin xyz="0 0 0.5" rpy="0 0 0"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="1.0" radius="0.1"/>
+            </geometry>
+            <origin xyz="0 0 0.5" rpy="0 0 0"/>
+        </collision>
+        <inertial>
+            <mass value="5.0"/>
+            <origin xyz="0 0 0.5" rpy="0 0 0"/>
+            <inertia ixx="0.5" ixy="0.0" ixz="0.0" 
+                    iyy="0.5" iyz="0.0" 
+                    izz="0.1"/>
+        </inertial>
+    </link>
+
+    <!-- Link de inclinación fija -->
+    <joint name="tilt_joint" type="fixed">
+        <parent link="support_link"/>
+        <child link="tilt_link"/>
+        <origin xyz="0 0 1.0" rpy="0.5236 0 0"/>  <!-- 30 grados de inclinación inicial -->
+    </joint>
+
+    <link name="tilt_link">
+        <inertial>
+            <mass value="0.1"/>
+            <inertia ixx="0.01" ixy="0" ixz="0" 
+                    iyy="0.01" iyz="0" 
+                    izz="0.01"/>
+        </inertial>
+    </link>
+
+    <!-- Articulación giratoria del panel -->
+    <joint name="panel_joint" type="revolute">
+        <parent link="tilt_link"/>
+        <child link="panel_link"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="-0.5" upper="0.5" velocity="0.05" effort="100"/>
+        <dynamics damping="100.0" friction="20.0"/>
+    </joint>
+
+    <!-- Panel solar -->
+    <link name="panel_link">
+        <visual>
+            <geometry>
+                <box size="2.0 1.5 0.05"/>  <!-- Ancho x Alto x Grosor -->
+            </geometry>
+            <material name="panel_color">
+                <color rgba="0.1 0.3 0.9 0.9"/>
+            </material>
+            <!-- El panel está centrado en su eje de rotación -->
+            <origin xyz="1.0 0 0" rpy="0 0 0"/>  <!-- Desplazado la mitad de su ancho -->
+        </visual>
+        <collision>
+            <geometry>
+                <box size="2.0 1.5 0.05"/>
+            </geometry>
+            <origin xyz="1.0 0 0" rpy="0 0 0"/>
+        </collision>
+        <inertial>
+            <mass value="5.0"/>
+            <origin xyz="1.0 0 0" rpy="0 0 0"/>
+            <inertia ixx="1.0" ixy="0.0" ixz="0.0" 
+                    iyy="1.0" iyz="0.0" 
+                    izz="0.5"/>
+        </inertial>
+    </link>
+
+    <gazebo>
+        <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+            <parameters>/home/isrraelfcaq/ros2_ws/src/solar_follower/config/controllers.yaml</parameters>
+        </plugin>
+    </gazebo>
+
+    <ros2_control name="GazeboSystem" type="system">
+        <hardware>
+            <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+        </hardware>
+        <joint name="panel_joint">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+    </ros2_control>
+</robot>

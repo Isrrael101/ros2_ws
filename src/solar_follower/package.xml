@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>solar_follower</name>
+  <version>0.0.1</version>
+  <description>Seguidor solar usando ROS2 y Gazebo</description>
+  <maintainer email="your_email@example.com">your_name</maintainer>
+  <license>Apache License 2.0</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>gazebo_ros</depend>
+  <depend>gazebo_ros_pkgs</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>joint_state_publisher</depend>
+  <depend>xacro</depend>
+  <depend>python3-pytz</depend>
+  <depend>control_msgs</depend>
+  <depend>trajectory_msgs</depend>
+
+  <exec_depend>ros2launch</exec_depend>
+  <exec_depend>gazebo_plugins</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+    <gazebo_ros gazebo_model_path="${prefix}/worlds"/>
+  </export>
+</package>

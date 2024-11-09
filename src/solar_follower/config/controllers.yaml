@@ -1,0 +1,33 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 20
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    joint_trajectory_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+joint_trajectory_controller:
+  ros__parameters:
+    joints:
+      - panel_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 50.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: true
+    constraints:
+      stopped_velocity_tolerance: 0.05
+      goal_time: 1.0
+      panel_joint:
+        trajectory: 1.0
+        goal: 0.8
+    gains:
+      panel_joint:
+        p: 5.0   # Aumentado para mejor seguimiento
+        i: 0.0   
+        d: 1.0   # Aumentado para mejor amortiguamiento
